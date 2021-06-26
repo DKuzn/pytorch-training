@@ -4,7 +4,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.nn import Module
 from torch.optim import Optimizer
 from torch import Tensor
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Tuple, Callable
 from datetime import datetime
 from tqdm import tqdm
 
@@ -13,13 +13,29 @@ def training(dl_train: DataLoader,
              dl_test: DataLoader,
              model: Module,
              optimizer: Optimizer,
-             loss_function,
-             accuracy,
+             loss_function: Callable[[Tensor, Tensor], Tensor],
+             accuracy: Callable[[Tensor, Tensor], Union[Tensor, List[Tensor], Tuple[Tensor]]],
              epochs: int = 100,
              checkpoint_best: str = 'weights/best_weights.pt',
              checkpoint_last: str = 'weights/last_weights.pt',
              log_path: str = 'logs',
              checkpoint: Dict[str, Dict[str, Union[Tensor, List, str]]] = None):
+    """
+    :param dl_train: PyTorch DataLoader.
+    :param dl_test: PyTorch DataLoader.
+    :param model: PyTorch model.
+    :param optimizer: PyTorch optimizer.
+    :param loss_function: PyTorch built-in or custom loss function.
+    :param accuracy: Custom function to accuracy calculation.
+    :param epochs: Count of epochs to training.
+    :param checkpoint_best: Path to save best model weights.
+    :param checkpoint_last: Path to save last model weights.
+    :param log_path: Path to TensorBoard logging.
+    :param checkpoint: Last weights loaded with torch.load().
+    :return: None
+
+    The function to training PyTorch models with TensorBoard logging.
+    """
 
     device: torch.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
@@ -44,11 +60,13 @@ def training(dl_train: DataLoader,
         less_loss = 1e+10
 
     for epoch in range(init_epoch, epochs, 1):
-        print(f'Epoch {epoch + 1}/{epochs}')
+        print(f'\rEpoch {epoch + 1}/{epochs}')
         train_loss = 0.0
         train_accuracy = 0.0
 
-        for x_batch, y_batch in tqdm(dl_train, total=len(dl_train)):
+        train_bar = tqdm(dl_train, desc='Training', total=len(dl_train), unit='batch', ncols=80)
+
+        for x_batch, y_batch in train_bar:
             optimizer.zero_grad()
 
             x_batch = x_batch.to(device)
@@ -67,12 +85,14 @@ def training(dl_train: DataLoader,
         train_loss /= len(dl_train)
         train_accuracy /= len(dl_train)
 
-        print(f'\r - train_loss: {round(float(train_loss), 4)} - train_accuracy: {round(float(train_accuracy), 4)}')
+        print(f'\rtrain_loss: {round(float(train_loss), 4)} - train_accuracy: {round(float(train_accuracy), 4)}')
 
         test_loss = 0.0
         test_accuracy = 0.0
 
-        for x_test_batch, y_test_batch in tqdm(dl_test, total=len(dl_test)):
+        test_bar = tqdm(dl_test, desc='Testing', total=len(dl_test), unit='batch', ncols=80)
+
+        for x_test_batch, y_test_batch in test_bar:
             x_test_batch = x_test_batch.to(device)
             y_test_batch = y_test_batch.to(device)
 
@@ -92,7 +112,7 @@ def training(dl_train: DataLoader,
 
         writer.flush()
 
-        print(f'\r - test_loss: {round(float(test_loss), 4)} - test_accuracy: {round(float(test_accuracy), 4)}')
+        print(f'\rtest_loss: {round(float(test_loss), 4)} - test_accuracy: {round(float(test_accuracy), 4)}')
 
         if test_loss <= less_loss:
             torch.save(model.state_dict(), checkpoint_best)
