@@ -24,6 +24,7 @@ from torch import Tensor
 from typing import Dict, Union, List, Tuple, Callable
 from datetime import datetime
 from tqdm import tqdm
+import os
 
 
 def training(dl_train: DataLoader,
@@ -33,8 +34,8 @@ def training(dl_train: DataLoader,
              loss_function: Callable[[Tensor, Tensor], Tensor],
              accuracy: Callable[[Tensor, Tensor], Union[Tensor, List[Tensor], Tuple[Tensor]]],
              epochs: int = 100,
-             checkpoint_best: str = 'weights/best_weights.pt',
-             checkpoint_last: str = 'weights/last_weights.pt',
+             checkpoint_best: str = f'weights{os.sep}best_weights.pt',
+             checkpoint_last: str = f'weights{os.sep}last_weights.pt',
              log_path: str = 'logs',
              checkpoint: Dict[str, Dict[str, Union[Tensor, List, str]]] = None) -> None:
     """The function to training PyTorch models with TensorBoard logging.
@@ -72,7 +73,7 @@ def training(dl_train: DataLoader,
         writer = SummaryWriter(log_path)
 
     else:
-        log_path += f'/{datetime.now().strftime("%Y%m%d-%H%M%S")}'
+        log_path = os.path.join(log_path, f'{datetime.now().strftime("%Y%m%d-%H%M%S")}')
         writer = SummaryWriter(log_dir=log_path)
 
         init_epoch = 0
