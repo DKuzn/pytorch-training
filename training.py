@@ -1,21 +1,19 @@
-"""
-training.py
+# training.py
 
-Copyright (C) 2021 Дмитрий Кузнецов
+# Copyright (C) 2021 Дмитрий Кузнецов
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-"""
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import torch
 from torch.utils.data import DataLoader
@@ -38,22 +36,24 @@ def training(dl_train: DataLoader,
              checkpoint_best: str = 'weights/best_weights.pt',
              checkpoint_last: str = 'weights/last_weights.pt',
              log_path: str = 'logs',
-             checkpoint: Dict[str, Dict[str, Union[Tensor, List, str]]] = None):
-    """
-    :param dl_train: PyTorch DataLoader.
-    :param dl_test: PyTorch DataLoader.
-    :param model: PyTorch model.
-    :param optimizer: PyTorch optimizer.
-    :param loss_function: PyTorch built-in or custom loss function.
-    :param accuracy: Custom function to accuracy calculation.
-    :param epochs: Count of epochs to training.
-    :param checkpoint_best: Path to save best model weights.
-    :param checkpoint_last: Path to save last model weights.
-    :param log_path: Path to TensorBoard logging.
-    :param checkpoint: Last weights loaded with torch.load().
-    :return: None
+             checkpoint: Dict[str, Dict[str, Union[Tensor, List, str]]] = None) -> None:
+    """The function to training PyTorch models with TensorBoard logging.
 
-    The function to training PyTorch models with TensorBoard logging.
+    Args:
+        dl_train: PyTorch DataLoader.
+        dl_test: PyTorch DataLoader.
+        model: PyTorch model.
+        optimizer: PyTorch optimizer.
+        loss_function: PyTorch built-in or custom loss function.
+        accuracy: Custom function to accuracy calculation.
+        epochs: Count of epochs to training.
+        checkpoint_best: Path to save best model weights.
+        checkpoint_last: Path to save last model weights.
+        log_path: Path to TensorBoard logging.
+        checkpoint: Last weights loaded with torch.load().
+
+    Return:
+        None
     """
 
     device: torch.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
