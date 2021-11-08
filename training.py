@@ -79,6 +79,15 @@ def training(dl_train: DataLoader,
         init_epoch = 0
         less_loss = 1e+10
 
+    checkpoint_best_dir = os.path.dirname(checkpoint_best)
+    checkpoint_last_dir = os.path.dirname(checkpoint_last)
+
+    if not os.path.exists(checkpoint_best_dir) and checkpoint_best_dir != '':
+        os.mkdir(checkpoint_best_dir)
+
+    if not os.path.exists(checkpoint_last_dir) and checkpoint_last_dir != '':
+        os.mkdir(checkpoint_last_dir)
+
     for epoch in range(init_epoch, epochs, 1):
         print(f'\rEpoch {epoch + 1}/{epochs}')
         train_loss = 0.0
