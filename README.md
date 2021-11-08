@@ -3,7 +3,11 @@
 This repository contains the function to training PyTorch models.
 
 ## How to use
-Clone this repository to your project.
+Execute in the terminal to install this package with `pip`:
+
+```bash
+pip install git+https://github.com/DKuzn/pytorch-training.git
+```
 
 Example use case:
 
