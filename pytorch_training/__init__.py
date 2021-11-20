@@ -21,4 +21,4 @@ This package contains utilities to train PyTorch models.
 
 from .training import training
 
-__version__: str = '0.1.0'
+__version__: str = '0.1.1'
