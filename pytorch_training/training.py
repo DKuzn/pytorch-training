@@ -106,10 +106,10 @@ def training(dl_train: DataLoader,
             y_batch = y_batch.to(device)
 
             preds = model.forward(x_batch)
-            train_accuracy += accuracy(preds, y_batch)
+            train_accuracy += float(accuracy(preds, y_batch))
 
             loss_value = loss_function(preds, y_batch)
-            train_loss += loss_value
+            train_loss += float(loss_value)
 
             loss_value.backward()
 
@@ -130,9 +130,9 @@ def training(dl_train: DataLoader,
             y_test_batch = y_test_batch.to(device)
 
             test_preds = model.forward(x_test_batch)
-            test_accuracy += accuracy(test_preds, y_test_batch)
+            test_accuracy += float(accuracy(test_preds, y_test_batch))
 
-            test_loss += loss_function(test_preds, y_test_batch).data.cpu()
+            test_loss += float(loss_function(test_preds, y_test_batch).data.cpu())
 
         test_loss /= len(dl_test)
         test_accuracy /= len(dl_test)
